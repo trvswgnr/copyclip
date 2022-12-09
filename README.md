@@ -1,7 +1,15 @@
 # CopyClip
 
 # show whether tests are passing or not (from GitHub workflows)
-[![Tests](https://github.com/trvswgnr/copyclip/actions/workflows/tests.yml/badge.svg)](https://github.com/trvswgnr/copyclip/actions/workflows/tests.yml)
+[![macOS](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml/badge.svg)](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml)
+[![Windows](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml/badge.svg)](
+  https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml
+)
+[![Linux](
+  https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml/badge.svg
+)](
+  https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml
+)
 
 A super simple CLI tool for piping text to the clipboard, written in Rust.
 
