@@ -1,8 +1,5 @@
 use clipboard::{ClipboardContext, ClipboardProvider};
-use std::{
-    error::Error,
-    io::{self},
-};
+use std::{error::Error, io};
 
 fn run_program(
     input: &mut dyn io::Read,
