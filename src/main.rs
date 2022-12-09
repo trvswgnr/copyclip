@@ -41,13 +41,53 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+// #[cfg(any(windows, target_os = "macos"))]
 #[cfg(test)]
-#[cfg(any(windows, target_os = "macos"))]
 mod tests {
-    use std::io::{self, Cursor, Read};
+    use std::io::{self, Cursor, Read, Write};
 
     use super::*;
     use serial_test::serial;
+
+    trait WaitTimeout {
+        fn wait_timeout(
+            &mut self,
+            timeout_seconds: u64,
+        ) -> io::Result<Option<std::process::ExitStatus>>;
+    }
+
+    impl WaitTimeout for std::process::Child {
+        fn wait_timeout(
+            &mut self,
+            timeout_seconds: u64,
+        ) -> io::Result<Option<std::process::ExitStatus>> {
+            let timeout = std::time::Duration::from_secs(timeout_seconds);
+            // Wait for the process to exit, or kill it if it takes too long.
+            let start = std::time::Instant::now();
+            let mut ended_properly = false;
+            while start.elapsed() < timeout {
+                ended_properly = match self.try_wait()? {
+                    Some(status) => return Ok(Some(status)),
+                    None => {
+                        std::thread::sleep(std::time::Duration::from_millis(1));
+                        false
+                    }
+                }
+            }
+
+            if ended_properly {
+                return Ok(None);
+            }
+
+            // kill the process
+            self.kill()?;
+
+            // wait for the process to exit
+            self.wait()?;
+
+            Ok(None)
+        }
+    }
 
     #[test]
     #[serial]
@@ -82,7 +122,7 @@ mod tests {
 
     #[test]
     #[serial]
-    fn test_clipboard_set_contents() {
+    fn test_clipboard_set_contents() -> Result<(), Box<dyn Error>> {
         let input = "test clipboard set contents";
         let mut input_buf = Cursor::new(input);
         let mut output = Vec::new();
@@ -91,13 +131,15 @@ mod tests {
 
         assert!(result.is_ok());
 
-        let ctx = result.unwrap();
+        let ctx = result?;
         assert!(ctx.is_some());
 
-        let clipboard_contents = ctx.unwrap().get_contents().unwrap();
+        let clipboard_contents = ctx.unwrap().get_contents()?;
         assert_eq!(clipboard_contents, input);
 
         assert_eq!(output, b"Copied to clipboard!\n");
+
+        Ok(())
     }
 
     #[test]
@@ -140,25 +182,47 @@ mod tests {
     #[serial]
     #[cfg(unix)]
     fn test_pipe() -> Result<(), Box<dyn Error>> {
-        // Create a new process that runs `echo "test"`.
-        let mut child = std::process::Command::new("echo")
+        // new process that runs `echo "test"`.
+        #[cfg(unix)]
+        let mut child_echo = std::process::Command::new("echo")
             .arg("test 2")
+            .stdin(std::process::Stdio::piped())
             .stdout(std::process::Stdio::piped())
             .spawn()?;
 
-        // Get the stdout of the child process.
-        let stdout = child.stdout.take().unwrap();
+        #[cfg(windows)]
+        let mut child_echo = std::process::Command::new("cmd")
+            .arg("/C")
+            .arg("echo test 2")
+            .stdin(std::process::Stdio::piped())
+            .stdout(std::process::Stdio::piped())
+            .spawn()?;
 
-        // Read the stdout of the child process into a string.
-        let mut input = String::new();
-        io::BufReader::new(stdout).read_to_string(&mut input)?;
+        // wait for the child process to finish, or kill it if it takes too long.
+        let status = child_echo.wait_timeout(5)?;
+        assert!(status.is_some(), "Child process timed out!");
 
-        // Set the contents of the clipboard to the string.
+        // pipe the output of the child process to a new process that runs the `cargo run` command.
+        let child_echo_stdout = child_echo.stdout.take().unwrap();
+        let mut child_cargo_run = std::process::Command::new("cargo")
+            .arg("run")
+            .stdin(child_echo_stdout)
+            .stdout(std::process::Stdio::piped())
+            .spawn()?;
+
+        // wait for the child process to finish, or kill it if it takes too long.
+        let status = child_cargo_run.wait_timeout(5)?;
+        assert!(status.is_some(), "Child process timed out!");
+
+        // check contents of the clipboard are the same as the string.
         let mut ctx: ClipboardContext = ClipboardProvider::new()?;
-        ctx.set_contents(input)?;
+        assert_eq!(ctx.get_contents()?, "test 2\n"); // * the newline is added by the `echo` command.
 
-        // Assert that the contents of the clipboard is the same as the string.
-        assert_eq!(ctx.get_contents()?, "test 2\n"); // @note: the newline is added by the `echo` command.
+        // check the output of the `cargo run` command
+        let mut output = String::new();
+        let child_cargo_run_stdout = child_cargo_run.stdout.take().unwrap();
+        io::BufReader::new(child_cargo_run_stdout).read_to_string(&mut output)?;
+        assert_eq!(output, "Copied to clipboard!\n");
 
         Ok(())
     }
