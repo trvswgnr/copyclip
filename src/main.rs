@@ -95,6 +95,8 @@ mod tests {
 
         let clipboard_contents = ctx.unwrap().get_contents().unwrap();
         assert_eq!(clipboard_contents, input);
+
+        assert_eq!(output, b"Copied to clipboard!\n");
     }
 
     #[test]
