@@ -42,6 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 #[cfg(test)]
+#[cfg(any(windows, target_os = "macos"))]
 mod tests {
     use std::io::{self, Cursor, Read};
 
