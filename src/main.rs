@@ -135,6 +135,7 @@ mod tests {
 
     #[test]
     #[serial]
+    #[cfg(unix)]
     fn test_pipe() -> Result<(), Box<dyn Error>> {
         // Create a new process that runs `echo "test"`.
         let mut child = std::process::Command::new("echo")
