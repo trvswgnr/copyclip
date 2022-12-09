@@ -1,4 +1,4 @@
-name: build_linux
+name: Linux Tests
 
 on: [push, pull_request]
 
