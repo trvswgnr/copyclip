@@ -180,7 +180,6 @@ mod tests {
 
     #[test]
     #[serial]
-    #[cfg(unix)]
     fn test_pipe() -> Result<(), Box<dyn Error>> {
         // new process that runs `echo "test"`.
         #[cfg(target_os = "macos")]
@@ -207,8 +206,8 @@ mod tests {
             .spawn()?;
 
         // wait for the child process to finish, or kill it if it takes too long.
-        let status = child_echo.wait_timeout(5)?;
-        assert!(status.is_some(), "Child process timed out!");
+        let status = child_echo.wait_timeout(10)?;
+        assert!(status.is_some(), "Child `echo` process timed out!");
 
         // pipe the output of the child process to a new process that runs the `cargo run` command.
         let child_echo_stdout = child_echo.stdout.take().unwrap();
@@ -237,8 +236,8 @@ mod tests {
             .spawn()?;
 
         // wait for the child process to finish, or kill it if it takes too long.
-        let status = child_cargo_run.wait_timeout(5)?;
-        assert!(status.is_some(), "Child process timed out!");
+        let status = child_cargo_run.wait_timeout(10)?;
+        assert!(status.is_some(), "Child `cargo run` process timed out!");
 
         // check contents of the clipboard are the same as the string.
         let mut ctx: ClipboardContext = ClipboardProvider::new()?;

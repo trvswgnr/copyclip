@@ -1,4 +1,4 @@
-name: Rust
+name: Test & Build on macOS
 
 on: [push, pull_request]
 
@@ -12,23 +12,17 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-
+        os: [macOS-latest]
     steps:
     - uses: actions/checkout@v2
     - name: Install npm dependencies
       run: cd .github/actions/xvfb-action &&npm install
-    - name: Setup xcb
-      if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: sudo apt-get update && sudo apt-get install -y libxcb-xfixes0-dev
     - name: Setup rust toolchain
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        components: rustfmt, clippy
-    - name: Clippy
-      run: cargo clippy
-    - name: RustFmt
+        components: rustfmt
+    - name: Check formatting
       run: cargo fmt -- --check
     - name: Run tests
       uses: ./.github/actions/xvfb-action
