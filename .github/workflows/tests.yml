@@ -20,7 +20,7 @@ jobs:
       run: pwd && cd .github/actions/xvfb-action && ls -a && npm install
     - name: Setup xcb
       if: ${{ matrix.os == 'ubuntu-latest' }}
-      run: sudo apt-get update && apt-get install -y libxcb-xfixes0-dev
+      run: sudo apt-get update && sudo apt-get install -y libxcb-xfixes0-dev
     - name: Setup rust toolchain
       uses: actions-rs/toolchain@v1
       with:
