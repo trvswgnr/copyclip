@@ -1,10 +1,7 @@
 name: Test & Build on macOS
-
 on: [push, pull_request]
-
 env:
   CARGO_TERM_COLOR: always
-
 jobs:
   test:
     name: Test on ${{ matrix.os }}
