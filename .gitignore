@@ -77,7 +77,7 @@ node_modules
 src/test/rustdoc-gui/src/**.lock
 
 ## User
-*.scratch.*
-*.bk.*
+*.scratch*
+*.bk*
 
 # Before adding new lines, see the comment at the top.
