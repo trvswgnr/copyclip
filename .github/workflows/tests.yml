@@ -10,10 +10,12 @@ jobs:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
+      continue-on-error: false
     - uses: actions/checkout@v2
     - name: Setup xcb
       if: ${{ matrix.os == 'ubuntu-latest' }}
