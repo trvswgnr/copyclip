@@ -44,6 +44,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 // #[cfg(any(windows, target_os = "macos"))]
 #[cfg(test)]
 mod tests {
+    #[allow(unused_imports)]
     use std::io::Read;
     use std::io::{self, Cursor};
 
