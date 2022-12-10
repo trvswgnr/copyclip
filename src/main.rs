@@ -182,7 +182,7 @@ mod tests {
 
     #[test]
     #[serial]
-    #[cfg(target_os = "macos")] // TODO: make this work on windows and linux
+    #[cfg(target_os = "macos")] // TODO: make this work on windows and linux.
     fn test_pipe() -> Result<(), Box<dyn Error>> {
         // new process that runs `echo "test"`.
         let mut child_echo = std::process::Command::new("echo")
