@@ -183,7 +183,7 @@ mod tests {
     #[cfg(unix)]
     fn test_pipe() -> Result<(), Box<dyn Error>> {
         // new process that runs `echo "test"`.
-        #[cfg(unix)]
+        #[cfg(target_os = "macos")]
         let mut child_echo = std::process::Command::new("echo")
             .arg("test 2")
             .stdin(std::process::Stdio::piped())
@@ -198,14 +198,40 @@ mod tests {
             .stdout(std::process::Stdio::piped())
             .spawn()?;
 
+        #[cfg(target_os = "linux")]
+        let mut child_echo = std::process::Command::new("bash")
+            .arg("-c")
+            .arg("echo test 2")
+            .stdin(std::process::Stdio::piped())
+            .stdout(std::process::Stdio::piped())
+            .spawn()?;
+
         // wait for the child process to finish, or kill it if it takes too long.
         let status = child_echo.wait_timeout(5)?;
         assert!(status.is_some(), "Child process timed out!");
 
         // pipe the output of the child process to a new process that runs the `cargo run` command.
         let child_echo_stdout = child_echo.stdout.take().unwrap();
+
+        #[cfg(target_os = "macos")]
         let mut child_cargo_run = std::process::Command::new("cargo")
             .arg("run")
+            .stdin(child_echo_stdout)
+            .stdout(std::process::Stdio::piped())
+            .spawn()?;
+
+        #[cfg(windows)]
+        let mut child_cargo_run = std::process::Command::new("cmd")
+            .arg("/C")
+            .arg("cargo run")
+            .stdin(child_echo_stdout)
+            .stdout(std::process::Stdio::piped())
+            .spawn()?;
+
+        #[cfg(target_os = "linux")]
+        let mut child_cargo_run = std::process::Command::new("bash")
+            .arg("-c")
+            .arg("cargo run")
             .stdin(child_echo_stdout)
             .stdout(std::process::Stdio::piped())
             .spawn()?;
