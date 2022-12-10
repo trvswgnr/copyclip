@@ -1,6 +1,8 @@
 # CopyClip
 
-[![Test & Build](https://github.com/trvswgnr/copyclip/actions/workflows/test-all.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test-all.yml)
+[![Linux](https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml)
+[![macOS](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml)
+[![Windows](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml)
 
 A super simple CLI tool for piping text to the clipboard, written in Rust.
 

@@ -1,4 +1,4 @@
-name: Test & Build on Linux
+name: Linux
 on: [push, pull_request]
 env:
   CARGO_TERM_COLOR: always

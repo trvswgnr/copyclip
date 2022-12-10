@@ -1,4 +1,4 @@
-name: Test & Build on Windows
+name: Windows
 on: [push, pull_request]
 env:
   CARGO_TERM_COLOR: always
