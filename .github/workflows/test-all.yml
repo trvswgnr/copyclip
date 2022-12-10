@@ -26,9 +26,7 @@ jobs:
       run: cargo fmt -- --check
     - name: Run tests
       uses: ./.github/actions/xvfb-action
-      continue-on-error: true
       with:
         run: cargo test --verbose -- --test-threads=1
     - name: Build
       run: cargo build
-      continue-on-error: true
