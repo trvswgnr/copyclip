@@ -1,4 +1,4 @@
-use clipboard::{ClipboardContext, ClipboardProvider};
+use cli_clipboard::{ClipboardContext, ClipboardProvider};
 use std::{error::Error, io};
 
 fn run_program(
