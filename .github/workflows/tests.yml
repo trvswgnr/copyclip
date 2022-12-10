@@ -15,8 +15,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set env
-      run: export DEBIAN_FRONTEND=noninteractive
     - name: Setup xcb
       if: ${{ matrix.os == 'ubuntu-latest' }}
       run: sudo apt-get install libxcb-xfixes0-dev
