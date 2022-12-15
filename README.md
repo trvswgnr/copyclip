@@ -1,29 +1,27 @@
 # CopyClip
 
-# show whether tests are passing or not (from GitHub workflows)
-[![macOS](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml/badge.svg)](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml)
-[![Windows](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml/badge.svg)](
-  https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml
-)
-[![Linux](
-  https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml/badge.svg
-)](
-  https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml
-)
+[![Linux](https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.linux.yml)
+[![macOS](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.macos.yml)
+[![Windows](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml/badge.svg?branch=main)](https://github.com/trvswgnr/copyclip/actions/workflows/test.windows.yml)
 
 A super simple CLI tool for piping text to the clipboard, written in Rust.
 
 ## Installation
 
-- Unix:
-  Run the Unix install script:
+1. Make sure Cargo is [installed](https://doc.rust-lang.org/cargo/getting-started/installation.html) on your system:
 
-  ```sh
-  curl -sL https://raw.githubusercontent.com/trvswgnr/copyclip/main/install-unix.sh | $SHELL
-  ```
-- Windows:
-  Run the Windows install script:
+    ```bash
+    cargo --version
+    ```
 
-  ```powershell
-  iwr https://raw.githubusercontent.com/trvswgnr/copyclip/main/install-windows.ps1 -useb | iex
-  ```
+1. Run `cargo install --git https://github.com/trvswgnr/copyclip` to install the latest version of CopyClip.
+
+## Usage
+
+CopyClip is a simple CLI tool that takes text from stdin and copies it to the clipboard. It's intended to be used in a pipeline, like so:
+
+```bash
+echo "Hello, world!" | copyclip
+```
+
+Then you can paste the text from the clipboard wherever you like.
