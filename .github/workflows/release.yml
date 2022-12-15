@@ -1,0 +1,43 @@
+name: "pre-release"
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  pre-release:
+    name: Release on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install npm dependencies
+      run: cd .github/actions/xvfb-action &&npm install
+    - name: Setup xcb
+      run: sudo apt-get update && sudo apt-get install -y libxcb-xfixes0-dev
+    - name: Setup rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt
+    - name: Check formatting
+      run: cargo fmt -- --check
+    - name: Run tests
+      uses: ./.github/actions/xvfb-action
+      with:
+        run: cargo test --verbose -- --test-threads=1
+    - name: Build
+      run: cargo build
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          target/release/copyclip
+
