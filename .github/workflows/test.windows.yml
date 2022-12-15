@@ -1,5 +1,14 @@
 name: Windows
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+  merge:
+    branches:
+      - main
 env:
   CARGO_TERM_COLOR: always
 jobs:
